@@ -5377,18 +5377,32 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "Index",
   data: function data() {
     return {
-      dropzone: null
+      dropzone: null,
+      title: null
     };
   },
   mounted: function mounted() {
     this.dropzone = new dropzone__WEBPACK_IMPORTED_MODULE_0__["default"](this.$refs.dropzone, {
-      url: "fdfdf"
+      url: '/api/posts',
+      autoProcessQueue: false
     });
+  },
+  methods: {
+    store: function store() {
+      var images = new FormData();
+      var files = this.dropzone.getAcceptedFiles();
+      files.forEach(function (file) {
+        images.append('images[]', file);
+      });
+      axios.post('/api/posts', images);
+    }
   }
 });
 
@@ -28078,14 +28092,47 @@ var render = function () {
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
   return _c("div", { staticClass: "w-25" }, [
+    _c("input", {
+      directives: [
+        {
+          name: "model",
+          rawName: "v-model",
+          value: _vm.title,
+          expression: "title",
+        },
+      ],
+      staticClass: "mb-3 form-control",
+      attrs: { type: "text", placeholder: "title" },
+      domProps: { value: _vm.title },
+      on: {
+        input: function ($event) {
+          if ($event.target.composing) {
+            return
+          }
+          _vm.title = $event.target.value
+        },
+      },
+    }),
+    _vm._v(" "),
     _c(
       "div",
       {
         ref: "dropzone",
-        staticClass: "btn d-block p-5 bg-dark text-center text-light",
+        staticClass: "mb-3 btn d-block p-5 bg-dark text-center text-light",
       },
       [_vm._v("\n              Upload\n    ")]
     ),
+    _vm._v(" "),
+    _c("input", {
+      staticClass: "btn btn-primary",
+      attrs: { type: "submit", value: "add" },
+      on: {
+        click: function ($event) {
+          $event.preventDefault()
+          return _vm.store.apply(null, arguments)
+        },
+      },
+    }),
   ])
 }
 var staticRenderFns = []
