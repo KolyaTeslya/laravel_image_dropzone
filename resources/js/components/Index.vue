@@ -7,7 +7,7 @@
       <div class="mb-3">
           <vue-editor useCustomImageHandler @image-added="handleImageAdded" v-model="content" />
       </div>
-      <input @click.prevent="store" type="submit" class="btn btn-primary" value="add">
+      <input @click.prevent="update" type="submit" class="btn btn-primary" value="Update">
       <div class="mt-5">
           <div v-if="post">
                 <h4>{{ post.title }}</h4>
@@ -51,7 +51,7 @@ export default {
     },
 
     methods: {
-        store(){
+        update(){
             const data = new FormData()
             const files = this.dropzone.getAcceptedFiles()
             files.forEach(file => {
@@ -60,9 +60,10 @@ export default {
             })
             data.append('title', this.title)
             data.append('content', this.content)
+            data.append('_method', 'PATCH')
             this.title = ''
             this.content = ''
-            axios.post('/api/posts', data)
+            axios.post(`/api/posts/${this.post.id}`, data)
             .then( res => {
                 this.getPost()
             })
@@ -72,6 +73,15 @@ export default {
             axios.get('/api/posts')
             .then( res => {
                 this.post = res.data.data
+
+                this.title = this.post.title
+                this.content = this.post.content
+
+                this.post.images.forEach( image => {
+                    let file = { name: image.name, size: image.size };
+                    this.dropzone.displayExistingFile(file, image.preview_url);
+
+                })
             })
         },
 

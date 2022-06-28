@@ -5417,7 +5417,7 @@ __webpack_require__.r(__webpack_exports__);
     this.getPost();
   },
   methods: {
-    store: function store() {
+    update: function update() {
       var _this = this;
 
       var data = new FormData();
@@ -5429,9 +5429,10 @@ __webpack_require__.r(__webpack_exports__);
       });
       data.append('title', this.title);
       data.append('content', this.content);
+      data.append('_method', 'PATCH');
       this.title = '';
       this.content = '';
-      axios.post('/api/posts', data).then(function (res) {
+      axios.post("/api/posts/".concat(this.post.id), data).then(function (res) {
         _this.getPost();
       });
     },
@@ -5440,6 +5441,17 @@ __webpack_require__.r(__webpack_exports__);
 
       axios.get('/api/posts').then(function (res) {
         _this2.post = res.data.data;
+        _this2.title = _this2.post.title;
+        _this2.content = _this2.post.content;
+
+        _this2.post.images.forEach(function (image) {
+          var file = {
+            name: image.name,
+            size: image.size
+          };
+
+          _this2.dropzone.displayExistingFile(file, image.preview_url);
+        });
       });
     },
     handleImageAdded: function handleImageAdded(file, Editor, cursorLocation, resetUploader) {
@@ -42257,11 +42269,11 @@ var render = function () {
     _vm._v(" "),
     _c("input", {
       staticClass: "btn btn-primary",
-      attrs: { type: "submit", value: "add" },
+      attrs: { type: "submit", value: "Update" },
       on: {
         click: function ($event) {
           $event.preventDefault()
-          return _vm.store.apply(null, arguments)
+          return _vm.update.apply(null, arguments)
         },
       },
     }),
